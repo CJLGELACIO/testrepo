@@ -1,0 +1,330 @@
+/* =========================================================
+   COLOR PALETTE
+   Change these to re-theme the whole game.
+   ========================================================= */
+:root{
+  --bg-deep: #241a33;     /* page background */
+  --bg-panel: #1a1226;    /* cabinet / panel background */
+  --cream: #f3ece0;       /* main text + player color */
+  --mustard: #e8b339;     /* accent: title, ground top, buttons */
+  --teal: #4fb0a5;        /* accent: stat labels */
+  --coral: #e2543a;       /* accent: spikes, "you died" heading */
+  --line: rgba(243,236,224,0.14); /* subtle borders */
+}
+
+*{ box-sizing: border-box; }
+
+/* =========================================================
+   PAGE LAYOUT
+   ========================================================= */
+html, body{
+  margin:0;
+  padding:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(79,176,165,0.10), transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(232,179,57,0.08), transparent 40%),
+    var(--bg-deep);
+  color: var(--cream);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stage{
+  width: min(920px, 94vw);
+  padding: 28px clamp(18px, 3vw, 40px) 36px;
+}
+
+/* =========================================================
+   HEADER: title, tagline, live stats
+   ========================================================= */
+.masthead{
+  display:flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+h1{
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(18px, 3.4vw, 30px);
+  line-height: 1.5;
+  margin: 0;
+  color: var(--mustard);
+  letter-spacing: 1px;
+}
+
+.tagline{
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: rgba(243,236,224,0.65);
+  max-width: 46ch;
+}
+
+.stat{
+  text-align: right;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: var(--teal);
+  line-height: 2;
+}
+.stat span{ display:block; color: var(--cream); font-size: 16px; }
+
+/* =========================================================
+   GAME CABINET: the frame around the canvas
+   ========================================================= */
+.cabinet{
+  position: relative;
+  border-radius: 14px;
+  background: var(--bg-panel);
+  padding: 10px;
+  box-shadow: 0 0 0 1px var(--line), 0 30px 60px -25px rgba(0,0,0,0.6);
+}
+
+canvas{
+  display:block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #2f2244 0%, #251a38 60%, #1c1428 100%);
+  touch-action: none; /* prevents mobile scroll/zoom gestures while tapping to jump */
+}
+
+/* =========================================================
+   CONTROLS HINT ROW (below the cabinet)
+   ========================================================= */
+.hint{
+  display:flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  font-size: 13px;
+  color: rgba(243,236,224,0.55);
+}
+.hint kbd{
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  background: rgba(243,236,224,0.08);
+  border: 1px solid var(--line);
+  padding: 4px 7px;
+  border-radius: 4px;
+  color: var(--cream);
+  margin-right: 6px;
+}
+
+/* =========================================================
+   OVERLAYS: the "start" and "you lost" screens
+   Both share .overlay / .panel; .show fades them in.
+   ========================================================= */
+.overlay{
+  position:absolute;
+  inset:0;
+  border-radius: 8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(20,14,30,0.0);
+  pointer-events:none;
+  opacity:0;
+  transition: opacity .25s ease;
+}
+.overlay.show{
+  opacity:1;
+  pointer-events:auto;
+  background: rgba(15,10,22,0.88);
+}
+
+.panel{
+  width: min(92%, 480px);
+  text-align:center;
+  transform: translateY(8px);
+  opacity:0;
+  transition: opacity .35s ease .1s, transform .35s ease .1s;
+}
+.overlay.show .panel{ opacity:1; transform: translateY(0); }
+
+.panel h2{
+  font-family: 'Press Start 2P', monospace;
+  color: var(--coral);
+  font-size: clamp(16px, 3vw, 22px);
+  margin: 0 0 6px;
+}
+.panel p{
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: rgba(243,236,224,0.7);
+}
+
+/* =========================================================
+   LOSE VIDEO (inline size, used inside the fullscreen panel
+   as the base before .fullscreen-video overrides it below)
+   ========================================================= */
+.video-container{
+  width: 100%;
+  margin-bottom: 16px;
+}
+.video-container video,
+.video-container iframe{
+  width: 100%;
+  height: 220px;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--line);
+  background:#000;
+  display:block;
+}
+
+/* =========================================================
+   FULLSCREEN LOSE OVERLAY
+   Covers the entire viewport (not just the game cabinet).
+   Sits outside .stage in the HTML so position:fixed works
+   relative to the whole page.
+   ========================================================= */
+.fullscreen-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+  display: none;              /* toggled to flex by .show via JS */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.fullscreen-overlay.show{
+  display: flex;
+  opacity: 1;
+}
+
+.fullscreen-content{
+  width: min(94vw, 900px);
+  text-align: center;
+  padding: 20px;
+}
+
+.fullscreen-content h2{
+  font-family: 'Press Start 2P', monospace;
+  color: var(--coral);
+  font-size: clamp(16px, 3vw, 24px);
+  margin: 0 0 8px;
+}
+.fullscreen-content p{
+  font-size: 14px;
+  color: rgba(243,236,224,0.75);
+  margin: 0 0 16px;
+}
+
+/* the win screen uses a friendlier color than the lose screen's coral,
+   since "you made it" deserves to look a little different (even though
+   it's a troll) */
+.fullscreen-content h2.win-heading{
+  color: var(--mustard);
+}
+.fullscreen-content .credit{
+  font-size: 13px;
+  color: rgba(243,236,224,0.5);
+  margin: 0;
+}
+
+/* the video fills most of the screen while trapped in this overlay */
+.fullscreen-video{
+  margin: 0 auto 20px;
+}
+.fullscreen-video video,
+.fullscreen-video iframe{
+  width: 100%;
+  height: min(70vh, 620px);
+  border-radius: 10px;
+}
+
+/* the X button that looks clickable but does not close anything */
+.fake-close{
+  position: absolute;
+  top: 22px;
+  right: 26px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.06);
+  color: var(--cream);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+.fake-close:hover{ background: rgba(255,255,255,0.12); }
+
+.fake-close.shake{
+  animation: shakeX .4s ease;
+}
+@keyframes shakeX{
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* "THERE IS NO ESCAPE" toast, briefly shown when the X is clicked */
+.no-escape-toast{
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--coral);
+  background: rgba(20,14,30,0.9);
+  border: 1px solid var(--line);
+  padding: 10px 16px;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.no-escape-toast.show{
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .fake-close.shake{ animation: none; }
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+button.again{
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #1a1226;
+  background: var(--mustard);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+button.again:hover{ background: #f2c559; }
+button.again:active{ transform: translateY(1px); }
+
+.start-panel .panel p{ max-width: 40ch; margin-left:auto; margin-right:auto; }
+
+.footer-note{
+  margin-top: 18px;
+  font-size: 12px;
+  color: rgba(243,236,224,0.4);
+  text-align:center;
+}
+
+/* Respect users who've asked their OS to reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .overlay, .panel{ transition: none; }
+}

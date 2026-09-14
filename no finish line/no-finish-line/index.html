@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>No Finish Line</title>
+
+<!-- Pixel-style font used for headings/HUD text -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<!-- All visual styling lives here -->
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- ============ HEADER: title + live stats ============ -->
+  <div class="masthead">
+    <div>
+      <h1>NO FINISH LINE</h1>
+      <p class="tagline">There's no flag at the end. Jump the gaps, dodge the spikes, and see how far you get before it gets you.</p>
+    </div>
+    <div class="stat">
+      DISTANCE<span id="score">0</span>
+      BEST<span id="best">0</span>
+    </div>
+  </div>
+
+  <!-- ============ GAME CABINET: canvas + overlays ============ -->
+  <div class="cabinet">
+    <canvas id="game" width="860" height="360"></canvas>
+
+    <!-- Shown before the first run starts -->
+    <div class="overlay start-panel show" id="startOverlay">
+      <div class="panel">
+        <h2>READY?</h2>
+        <p>Space or ↑ to jump. There is nothing to win — only how long you last.</p>
+        <button class="again" id="startBtn">START RUNNING</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ CONTROLS HINT ============ -->
+  <div class="hint">
+    <div><kbd>SPACE</kbd> / <kbd>↑</kbd> jump</div>
+    <div><kbd>TAP</kbd> jump on mobile</div>
+  </div>
+
+  <p class="footer-note">Every run ends the same way eventually. That's the game.</p>
+</div>
+
+<!-- ============ FULLSCREEN LOSE OVERLAY ============
+     Lives outside .stage/.cabinet on purpose so it can cover
+     the entire viewport (position: fixed, inset: 0) instead of
+     just the game cabinet. There is a close (X) button, but
+     clicking it does not close anything - see js/game.js -->
+<div class="fullscreen-overlay" id="loseOverlay">
+
+  <!-- fake close button - always visible, never actually closes -->
+  <button class="fake-close" id="fakeCloseBtn" aria-label="Close">&times;</button>
+
+  <!-- the "there is no escape" message, hidden until you click the X -->
+  <div class="no-escape-toast" id="noEscapeToast">THERE IS NO ESCAPE</div>
+
+  <div class="fullscreen-content">
+    <h2>YOU DIDN'T MAKE IT</h2>
+    <p>You got <strong id="loseScore">0</strong>m.</p>
+
+    <!-- game.js fills this container with either a <video> tag
+         or a YouTube <iframe>, depending on config.js -->
+    <div id="videoContainer" class="video-container fullscreen-video"></div>
+
+    <!-- hidden until the video actually finishes playing -->
+    <button class="again" id="retryBtn" hidden>RUN AGAIN</button>
+  </div>
+</div>
+
+<!-- ============ FULLSCREEN WIN OVERLAY (secret ending) ============
+     Same trapped-video trick as the lose overlay above, but shown
+     if you actually reach the distance set in config.js
+     (DIFFICULTY_CONFIG.winDistanceMeters). Once the video ends,
+     the credits content below the video is revealed instead of a
+     retry button - there's no "run again" here, only "thanks for
+     playing." -->
+<div class="fullscreen-overlay" id="winOverlay">
+
+  <button class="fake-close" id="fakeCloseBtnWin" aria-label="Close">&times;</button>
+
+  <div class="no-escape-toast" id="noEscapeToastWin">THERE IS NO ESCAPE</div>
+
+  <div class="fullscreen-content">
+    <h2 class="win-heading" id="winHeading">YOU MADE IT?</h2>
+    <p id="winSubtext">You got <strong id="winScore">0</strong>m. Sit tight.</p>
+
+    <!-- game.js fills this container the same way as the lose video -->
+    <div id="winVideoContainer" class="video-container fullscreen-video"></div>
+
+    <!-- revealed once the win video finishes - this is the actual ending -->
+    <div id="endgameContent" hidden>
+      <h2 class="win-heading">THANKS FOR PLAYING!</h2>
+      <p class="credit">a game by CJLG</p>
+    </div>
+  </div>
+</div>
+
+<!-- Load order matters: config first (settings), then the game logic -->
+<script src="js/config.js"></script>
+<script src="js/game.js"></script>
+
+</body>
+</html>
