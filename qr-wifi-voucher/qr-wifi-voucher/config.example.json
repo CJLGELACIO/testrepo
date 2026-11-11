@@ -1,0 +1,32 @@
+{
+  "cafeName": "My Cafe",
+  "wifiName": "MyCafe Guest WiFi",
+
+  "port": 3000,
+  "host": "0.0.0.0",
+  "cookieSecure": false,
+  "sessionHours": 12,
+  "syncIntervalSeconds": 10,
+  "keepHistoryDays": 30,
+
+  "voucher": {
+    "durationMinutes": 180,
+    "durationOptionsMinutes": [60, 120, 180],
+    "unusedExpiryHours": 12,
+    "maxUnused": 100,
+    "codeLength": 8
+  },
+
+  "router": {
+    "mode": "mock",
+
+    "url": "https://192.168.88.1",
+    "username": "qrwifi-api",
+    "password": "",
+    "caFile": "",
+    "insecureSkipVerify": false,
+    "profile": "qrwifi",
+    "server": "",
+    "loginUrl": "http://192.168.88.1/login"
+  }
+}

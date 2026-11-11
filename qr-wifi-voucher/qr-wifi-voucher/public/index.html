@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Wi-Fi vouchers</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="app">
+  <header class="bar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span id="cafe-name" class="brand-name">Wi-Fi vouchers</span>
+    </div>
+    <div class="bar-right">
+      <span id="router-pill" class="pill" data-state="checking">Checking router…</span>
+      <span id="who" class="who"></span>
+      <button id="logout" class="btn btn-quiet" type="button">Log out</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="desk" aria-labelledby="desk-title">
+      <h1 id="desk-title">New Wi-Fi voucher</h1>
+      <form id="gen-form" class="gen">
+        <label for="duration">Time allowed</label>
+        <select id="duration" class="field"></select>
+        <button id="gen-btn" class="btn btn-primary" type="submit">Generate voucher</button>
+      </form>
+      <p id="gen-error" class="error" role="alert" hidden></p>
+      <p id="ticket-empty" class="ticket-empty">The voucher shows up here when you generate it. Let the customer scan it, or print it.</p>
+      <article id="ticket" class="ticket" hidden aria-label="Wi-Fi voucher"></article>
+    </section>
+
+    <section class="ledger" aria-labelledby="ledger-title">
+      <div class="ledger-head">
+        <h2 id="ledger-title">Vouchers</h2>
+        <div class="tabs" role="tablist" aria-label="Show vouchers">
+          <button class="tab" role="tab" type="button" data-tab="live" aria-selected="true">Live <span id="count-live" class="count">0</span></button>
+          <button class="tab" role="tab" type="button" data-tab="ended" aria-selected="false">Ended <span id="count-ended" class="count">0</span></button>
+        </div>
+      </div>
+      <ul id="list" class="rows"></ul>
+      <p id="list-empty" class="empty" hidden></p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="slip" class="slip" aria-hidden="true"></div>
+
+  <script src="/static/qr.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

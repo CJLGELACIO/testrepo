@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Staff log in</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="login-body">
+  <main class="login">
+    <div class="brand brand-large">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span id="cafe-name" class="brand-name">Wi-Fi vouchers</span>
+    </div>
+    <h1>Staff log in</h1>
+    <form id="login-form" class="login-form">
+      <label for="username">Username</label>
+      <input id="username" class="field" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus>
+      <label for="password">Password</label>
+      <input id="password" class="field" type="password" autocomplete="current-password" required>
+      <p id="login-error" class="error" role="alert" hidden></p>
+      <button id="login-btn" class="btn btn-primary" type="submit">Log in</button>
+    </form>
+  </main>
+  <script src="/static/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "qr-wifi-voucher",
+  "version": "1.0.0",
+  "description": "Staff-generated QR Wi-Fi vouchers for a MikroTik hotspot (mock router included for demos)",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "staff": "node manage.js",
+    "test": "node --test"
+  }
+}
